@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Lost & Found Hub | Pusat Temuan & Kehilangan Kampus</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            }
+          },
+          boxShadow: {
+            'card': '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05)',
+            'card-hover': '0 10px 25px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04)',
+            'popover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Smooth scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    
+    /* Subtle dot grid pattern on canvas */
+    .bg-grid-pattern {
+      background-image: radial-gradient(#e2e8f0 1.2px, transparent 1.2px);
+      background-size: 20px 20px;
+    }
+
+    .modal-backdrop {
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(6px);
+    }
+  </style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 min-h-screen flex flex-col font-sans antialiased selection:bg-brand-500 selection:text-white bg-grid-pattern">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo & Title -->
+      <div class="flex items-center gap-3.5 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-md shadow-brand-500/20 text-white">
+          <i class="fa-solid fa-compass text-xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
+              Campus Lost &amp; Found Hub
+            </h1>
+            <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              Live Matching
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 font-medium">Sistem Rekonsiliasi &amp; Pencocokan Cerdas Barang Kampus</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons Header -->
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <button onclick="openCreateModal('lost')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-rose-50 text-rose-700 hover:bg-rose-100 hover:text-rose-800 border border-rose-200 shadow-xs active:scale-95 transition-all">
+          <i class="fa-solid fa-circle-exclamation text-rose-600"></i>
+          <span class="hidden sm:inline">+ Lapor Kehilangan</span>
+          <span class="sm:hidden">+ Kehilangan</span>
+        </button>
+        <button onclick="openCreateModal('found')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20 active:scale-95 transition-all">
+          <i class="fa-solid fa-hand-holding-heart"></i>
+          <span class="hidden sm:inline">+ Lapor Penemuan</span>
+          <span class="sm:hidden">+ Penemuan</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & Statistics Section -->
+  <section class="relative pt-8 pb-10 sm:py-12 border-b border-slate-200/80 bg-gradient-to-b from-white via-white to-slate-50/70">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Headline & Introduction -->
+      <div class="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200 mb-3.5 shadow-xs">
+          <i class="fa-solid fa-wand-magic-sparkles text-brand-600"></i>
+          Pencocokan Cerdas Kategori, Lokasi &amp; Ciri Fisik
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-3">
+          Temukan &amp; Pulangkan Barang Kampus dengan Cepat
+        </h2>
+        <p class="text-slate-600 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+          Hubungkan pelapor barang hilang dan penemu barang di lingkungan kampus melalui sistem pencarian cerdas terpadu dan konfirmasi langsung via WhatsApp.
+        </p>
+      </div>
+
+      <!-- Quick Counter Cards (Pure White Cards with Subtle Elevation) -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-4 max-w-4xl mx-auto">
+        
+        <!-- Total -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card flex items-center gap-3.5 hover:shadow-card-hover transition-all">
+          <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-xl flex-shrink-0">
+            <i class="fa-solid fa-boxes-stacked"></i>
+          </div>
+          <div>
+            <div id="stat-total" class="text-2xl font-extrabold text-slate-900 leading-none">0</div>
+            <div class="text-xs font-medium text-slate-500 mt-1">Total Laporan</div>
+          </div>
+        </div>
+
+        <!-- Lost -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card flex items-center gap-3.5 hover:shadow-card-hover transition-all">
+          <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl flex-shrink-0">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <div>
+            <div id="stat-lost" class="text-2xl font-extrabold text-rose-600 leading-none">0</div>
+            <div class="text-xs font-medium text-slate-500 mt-1">Barang Hilang</div>
+          </div>
+        </div>
+
+        <!-- Found -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card flex items-center gap-3.5 hover:shadow-card-hover transition-all">
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl flex-shrink-0">
+            <i class="fa-solid fa-box-open"></i>
+          </div>
+          <div>
+            <div id="stat-found" class="text-2xl font-extrabold text-emerald-600 leading-none">0</div>
+            <div class="text-xs font-medium text-slate-500 mt-1">Ditemukan</div>
+          </div>
+        </div>
+
+        <!-- Resolved -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-card flex items-center gap-3.5 hover:shadow-card-hover transition-all">
+          <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl flex-shrink-0">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div>
+            <div id="stat-resolved" class="text-2xl font-extrabold text-brand-600 leading-none">0</div>
+            <div class="text-xs font-medium text-slate-500 mt-1">Sudah Diklaim</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content & Filters Area -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    
+    <!-- Filter Control Card -->
+    <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-card mb-8 space-y-4">
+      
+      <!-- Top Row: Type Tabs & Real-time Search -->
+      <div class="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
+        
+        <!-- Segmented Type Tabs (Fresh Pill Style) -->
+        <div class="inline-flex p-1.5 rounded-2xl bg-slate-100 border border-slate-200/80" role="tablist">
+          <button onclick="setTypeFilter('')" id="tab-all" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all bg-white text-slate-900 shadow-xs border border-slate-200/80">
+            Semua Barang
+          </button>
+          <button onclick="setTypeFilter('lost')" id="tab-lost" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900">
+            <i class="fa-solid fa-circle-exclamation text-rose-500 mr-1.5"></i>Barang Hilang
+          </button>
+          <button onclick="setTypeFilter('found')" id="tab-found" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-600 hover:text-slate-900">
+            <i class="fa-solid fa-hand-holding-heart text-emerald-500 mr-1.5"></i>Ditemukan
+          </button>
+        </div>
+
+        <!-- Real-Time Keyword Search Bar -->
+        <div class="relative flex-1 max-w-xl">
+          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <i class="fa-solid fa-magnifying-glass text-sm"></i>
+          </span>
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Cari nama barang, ciri fisik, atau nama pelapor..." 
+            class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
+            oninput="handleSearchInput(this.value)"
+          >
+          <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600">
+            <i class="fa-solid fa-circle-xmark text-sm"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Secondary Filters: Category, Location, Status -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-3 border-t border-slate-100">
+        
+        <!-- Category Dropdown -->
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1.5">
+            <i class="fa-solid fa-shapes text-brand-600 mr-1"></i> Kategori Barang
+          </label>
+          <select id="categoryFilter" onchange="applyFilters()" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500">
+            <option value="">Semua Kategori</option>
+            <option value="ktm">Kartu / KTM</option>
+            <option value="kunci">Kunci Kendaraan / Ruangan</option>
+            <option value="elektronik">Elektronik &amp; Gadget</option>
+            <option value="dokumen">Dokumen &amp; Berkas</option>
+            <option value="dompet">Dompet &amp; Tas</option>
+            <option value="lainnya">Lainnya</option>
+          </select>
+        </div>
+
+        <!-- Location Dropdown -->
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1.5">
+            <i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> Lokasi Kampus
+          </label>
+          <select id="locationFilter" onchange="applyFilters()" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500">
+            <option value="">Semua Lokasi Kampus</option>
+            <option value="Gedung A">Gedung A</option>
+            <option value="Gedung B">Gedung B</option>
+            <option value="Perpustakaan">Perpustakaan</option>
+            <option value="Kantin">Kantin</option>
+            <option value="Parkiran Utama">Parkiran Utama</option>
+            <option value="Musala">Musala</option>
+            <option value="Auditorium">Auditorium</option>
+          </select>
+        </div>
+
+        <!-- Status Filter -->
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1.5">
+            <i class="fa-solid fa-hourglass-half text-amber-500 mr-1"></i> Status Pengembalian
+          </label>
+          <select id="statusFilter" onchange="applyFilters()" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500">
+            <option value="">Semua Status</option>
+            <option value="pending">Belum Diambil (Pending)</option>
+            <option value="resolved">Sudah Dikembalikan (Resolved)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Count & Filter Controls Bar -->
+    <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center gap-2.5">
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">Daftar Laporan Terkini</h3>
+        <span id="items-badge-count" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 shadow-xs">0 barang</span>
+      </div>
+      <button onclick="resetFilters()" class="text-xs font-semibold text-brand-600 hover:text-brand-700 hover:underline transition-colors flex items-center gap-1">
+        <i class="fa-solid fa-rotate-left text-[11px]"></i>
+        <span>Reset Filter</span>
+      </button>
+    </div>
+
+    <!-- Items Grid Container -->
+    <div id="itemsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+      <!-- Loading Skeleton / Items will be dynamically rendered here via app.js -->
+    </div>
+
+    <!-- Empty State Container -->
+    <div id="emptyState" class="hidden text-center py-16 px-4 bg-white rounded-2xl border border-slate-200 shadow-card max-w-md mx-auto my-8">
+      <div class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-3xl mx-auto mb-4">
+        <i class="fa-regular fa-folder-open"></i>
+      </div>
+      <h4 class="text-lg font-bold text-slate-900 mb-1.5">Tidak Ada Barang Ditemukan</h4>
+      <p class="text-xs sm:text-sm text-slate-500 mb-6 leading-relaxed">
+        Tidak ditemukan laporan yang cocok dengan kata kunci atau filter saat ini. Silakan ubah filter atau laporkan barang baru.
+      </p>
+      <button onclick="resetFilters()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-colors">
+        Reset Semua Filter
+      </button>
+    </div>
+  </main>
+
+  <!-- ==================== MODAL DETAIL & SMART MATCHER (PURE WHITE REVAMP) ==================== -->
+  <div id="detailModal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-backdrop flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-3xl rounded-3xl border border-slate-200 shadow-popover overflow-hidden my-8 transform transition-all">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+        <div class="flex items-center gap-2.5">
+          <span id="modal-type-badge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+            <!-- TYPE BADGE -->
+          </span>
+          <span id="modal-status-badge" class="px-3 py-1 rounded-full text-xs font-semibold">
+            <!-- STATUS BADGE -->
+          </span>
+        </div>
+        <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full bg-white hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center border border-slate-200 transition-colors shadow-xs">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+        
+        <!-- Item Photo Banner (jika tersedia) -->
+        <div id="modal-image-container" class="hidden relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center max-h-72 shadow-inner">
+          <img id="modal-image" src="" alt="Foto Barang" class="w-full h-72 object-contain bg-white">
+          <div class="absolute bottom-3 right-3 px-3 py-1 rounded-xl bg-white/95 backdrop-blur text-xs font-bold text-slate-800 border border-slate-200 shadow-md">
+            <i class="fa-solid fa-camera mr-1.5 text-brand-600"></i>Foto Barang Asli
+          </div>
+        </div>
+
+        <!-- Title & Basic Info -->
+        <div>
+          <h3 id="modal-title" class="text-xl sm:text-2xl font-extrabold text-slate-900 mb-3">
+            <!-- Item Title -->
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
+            <div class="flex items-center gap-2 text-slate-700">
+              <i class="fa-solid fa-shapes text-brand-600 w-5"></i>
+              <span class="text-slate-500 text-xs font-medium">Kategori:</span>
+              <span id="modal-category" class="font-bold text-slate-800 capitalize"></span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-700">
+              <i class="fa-solid fa-location-dot text-rose-500 w-5"></i>
+              <span class="text-slate-500 text-xs font-medium">Lokasi:</span>
+              <span id="modal-location" class="font-bold text-slate-800"></span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-700">
+              <i class="fa-regular fa-calendar text-amber-500 w-5"></i>
+              <span class="text-slate-500 text-xs font-medium">Tanggal:</span>
+              <span id="modal-date" class="font-bold text-slate-800"></span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-700">
+              <i class="fa-solid fa-user text-indigo-500 w-5"></i>
+              <span class="text-slate-500 text-xs font-medium">Pelapor:</span>
+              <span id="modal-reporter" class="font-bold text-slate-800"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description Box -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Deskripsi &amp; Ciri-Ciri Fisik</h4>
+          <div class="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs">
+            <p id="modal-description" class="text-sm text-slate-700 leading-relaxed whitespace-pre-line"></p>
+          </div>
+        </div>
+
+        <!-- Action Buttons: WhatsApp & Status Toggle -->
+        <div class="flex flex-col sm:flex-row gap-3 pt-1">
+          <a id="modal-wa-btn" href="#" target="_blank" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20 active:scale-95 transition-all">
+            <i class="fa-brands fa-whatsapp text-lg"></i>
+            <span>Hubungi Pelapor via WhatsApp</span>
+          </a>
+          <button id="modal-status-toggle-btn" onclick="toggleModalItemStatus()" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-xs transition-all">
+            <i class="fa-solid fa-arrows-rotate text-slate-500"></i>
+            <span id="modal-status-toggle-text">Ubah Status Pengembalian</span>
+          </button>
+        </div>
+
+        <!-- SMART MATCHING ENGINE SECTION -->
+        <div class="pt-6 border-t border-slate-200">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-base font-bold shadow-xs">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+              </div>
+              <div>
+                <h4 class="text-sm sm:text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  Rekomendasi Pencocokan Cerdas
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200 font-bold">Smart Match Engine</span>
+                </h4>
+                <p class="text-xs text-slate-500">Sistem menganalisis kesamaan kategori, lokasi gedung, serta kata kunci deskripsi fisik.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Matches Loading -->
+          <div id="matchesLoading" class="py-8 text-center text-slate-500 space-y-2">
+            <i class="fa-solid fa-circle-notch fa-spin text-2xl text-brand-600"></i>
+            <p class="text-xs font-medium">Menganalisis kemiripan teks, lokasi, dan kategori...</p>
+          </div>
+
+          <!-- Matches Container -->
+          <div id="matchesContainer" class="space-y-3">
+            <!-- Injected by app.js -->
+          </div>
+
+          <!-- Empty Matches State -->
+          <div id="matchesEmpty" class="hidden py-8 text-center p-6 rounded-2xl bg-slate-50 border border-slate-200/80">
+            <div class="w-10 h-10 rounded-full bg-white text-slate-400 flex items-center justify-center mx-auto mb-2.5 shadow-xs border border-slate-200">
+              <i class="fa-solid fa-sparkles text-slate-400"></i>
+            </div>
+            <p class="text-sm font-bold text-slate-700">Belum Ada Rekomendasi yang Cocok</p>
+            <p class="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+              Tidak ditemukan barang lawan dengan kemiripan signifikan saat ini. Sistem akan terus memantau laporan baru yang masuk.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/70 flex justify-end">
+        <button onclick="closeDetailModal()" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 shadow-xs transition-colors">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL FORM LAPOR BARANG (USER-FRIENDLY WHITE) ==================== -->
+  <div id="createModal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-backdrop flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-3xl border border-slate-200 shadow-popover overflow-hidden my-8">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+        <div>
+          <h3 id="create-modal-title" class="text-xl font-extrabold text-slate-900">Buat Laporan Barang</h3>
+          <p class="text-xs text-slate-500">Lengkapi data barang secara jelas untuk mempermudah pencocokan cerdas.</p>
+        </div>
+        <button onclick="closeCreateModal()" class="w-8 h-8 rounded-full bg-white hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center border border-slate-200 transition-colors shadow-xs">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Form Body -->
+      <form id="createItemForm" onsubmit="handleCreateSubmit(event)" class="p-6 space-y-4">
+        
+        <!-- Type Selection Cards -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Pilih Tipe Laporan</label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="relative flex items-center gap-3 p-3.5 rounded-2xl border-2 border-slate-200 bg-white cursor-pointer hover:border-rose-400 transition-all has-[:checked]:border-rose-500 has-[:checked]:bg-rose-50/40">
+              <input type="radio" name="formType" value="lost" class="text-rose-600 focus:ring-rose-500 w-4 h-4" required>
+              <div>
+                <div class="text-sm font-bold text-rose-700">Kehilangan (Lost)</div>
+                <div class="text-[11px] text-slate-500">Saya kehilangan barang saya</div>
+              </div>
+            </label>
+            <label class="relative flex items-center gap-3 p-3.5 rounded-2xl border-2 border-slate-200 bg-white cursor-pointer hover:border-emerald-400 transition-all has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50/40">
+              <input type="radio" name="formType" value="found" class="text-emerald-600 focus:ring-emerald-500 w-4 h-4" required>
+              <div>
+                <div class="text-sm font-bold text-emerald-700">Penemuan (Found)</div>
+                <div class="text-[11px] text-slate-500">Saya menemukan barang orang lain</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Judul Barang -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            Judul Barang <span class="text-rose-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            name="title" 
+            required 
+            placeholder="Contoh: KTM Mahasiswa Nurul Fikri an. Rizky, Kunci Honda Beat"
+            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
+          >
+        </div>
+
+        <!-- Kategori & Lokasi (2 Kolom) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Kategori <span class="text-rose-500">*</span>
+            </label>
+            <select name="category" required class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500">
+              <option value="">Pilih Kategori</option>
+              <option value="ktm">Kartu / KTM</option>
+              <option value="kunci">Kunci Kendaraan / Ruangan</option>
+              <option value="elektronik">Elektronik &amp; Gadget</option>
+              <option value="dokumen">Dokumen &amp; Berkas</option>
+              <option value="dompet">Dompet &amp; Tas</option>
+              <option value="lainnya">Lainnya</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Lokasi Kejadian <span class="text-rose-500">*</span>
+            </label>
+            <select name="location" required class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500">
+              <option value="">Pilih Gedung / Area</option>
+              <option value="Gedung A">Gedung A</option>
+              <option value="Gedung B">Gedung B</option>
+              <option value="Perpustakaan">Perpustakaan</option>
+              <option value="Kantin">Kantin</option>
+              <option value="Parkiran Utama">Parkiran Utama</option>
+              <option value="Musala">Musala</option>
+              <option value="Auditorium">Auditorium</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Nama Pelapor & WhatsApp (2 Kolom) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Nama Pelapor <span class="text-rose-500">*</span>
+            </label>
+            <input 
+              type="text" 
+              name="reporterName" 
+              required 
+              placeholder="Nama lengkap atau panggilan Anda"
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
+            >
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Nomor WhatsApp <span class="text-rose-500">*</span>
+            </label>
+            <input 
+              type="text" 
+              name="contact" 
+              required 
+              placeholder="08123456789 atau 628123456789"
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
+            >
+            <p class="text-[11px] text-slate-500 mt-1">Digunakan untuk konfirmasi klaim via WhatsApp langsung.</p>
+          </div>
+        </div>
+
+        <!-- Deskripsi Barang -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            Deskripsi &amp; Ciri-Ciri Fisik <span class="text-rose-500">*</span>
+          </label>
+          <textarea 
+            name="description" 
+            rows="3" 
+            required 
+            placeholder="Sebutkan warna, merk, gantungan, tulisan, nomor seri, atau detail unik lainnya yang memudahkan pencocokan..."
+            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 resize-none transition-all"
+          ></textarea>
+        </div>
+
+        <!-- Upload Foto Barang (Lokal) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <i class="fa-solid fa-camera text-brand-600"></i>
+              <span>Foto Barang (Disimpan Lokal)</span>
+            </span>
+            <span class="text-[11px] text-slate-500 font-normal">Opsional (Maks. 5MB)</span>
+          </label>
+
+          <!-- Dropzone Container -->
+          <div id="photoDropzone" onclick="triggerFileInput()" class="border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-4 text-center cursor-pointer transition-all bg-slate-50 hover:bg-brand-50/20">
+            <input 
+              type="file" 
+              id="imageInput" 
+              name="image" 
+              accept="image/jpeg,image/png,image/webp,image/jpg" 
+              class="hidden" 
+              onchange="handleImageSelect(event)"
+            >
+            
+            <!-- Default Upload Prompt -->
+            <div id="uploadPrompt" class="space-y-1.5 py-2">
+              <div class="w-10 h-10 mx-auto rounded-xl bg-white text-brand-600 flex items-center justify-center text-lg shadow-xs border border-slate-200">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+              <div class="text-xs font-bold text-slate-800">
+                Klik untuk upload foto barang agar mudah dikenali
+              </div>
+              <p class="text-[11px] text-slate-500">Mendukung format JPG, PNG, WEBP (Maksimal 5MB)</p>
+            </div>
+
+            <!-- Image Preview Box -->
+            <div id="imagePreviewContainer" class="hidden flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-left shadow-xs">
+              <div class="flex items-center gap-3 overflow-hidden">
+                <img id="imagePreview" src="" alt="Preview" class="w-14 h-14 rounded-lg object-cover border border-slate-200 flex-shrink-0">
+                <div class="min-w-0">
+                  <div id="imageFileName" class="text-xs font-bold text-slate-900 truncate max-w-[200px] sm:max-w-xs"></div>
+                  <div id="imageFileSize" class="text-[10px] text-slate-500"></div>
+                  <span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-brand-50 text-brand-700 mt-1">Siap diunggah</span>
+                </div>
+              </div>
+              <button type="button" onclick="clearSelectedImage(event)" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition-colors flex-shrink-0" title="Hapus foto">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+          <button type="button" onclick="closeCreateModal()" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 transition-colors">
+            Batal
+          </button>
+          <button type="submit" id="submitFormBtn" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-md shadow-brand-600/20 active:scale-95 transition-all">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Kirim Laporan</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 max-w-sm pointer-events-none">
+    <!-- Toasts dynamically appended here -->
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-slate-200/80 bg-white py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-graduation-cap text-brand-600 text-sm"></i>
+        <span class="font-medium text-slate-600">Campus Lost &amp; Found Hub &copy; 2026. Portal Layanan Terbuka Civitas Akademika.</span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-500 font-medium">
+        <span class="hover:text-brand-600 transition-colors cursor-pointer"><i class="fa-solid fa-shield-halved mr-1"></i>Keamanan Kampus</span>
+        <span>&bull;</span>
+        <span class="hover:text-brand-600 transition-colors cursor-pointer"><i class="fa-solid fa-circle-question mr-1"></i>Bantuan &amp; Panduan</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Frontend Logic Script -->
+  <script src="/app.js"></script>
+</body>
+</html>

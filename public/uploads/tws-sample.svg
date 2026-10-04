@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="twsbg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+    <linearGradient id="caseGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#twsbg)"/>
+  <!-- TWS Charging Case -->
+  <g transform="translate(180, 100)">
+    <rect x="0" y="40" width="240" height="180" rx="60" fill="url(#caseGrad)" stroke="#e2e8f0" stroke-width="4" filter="drop-shadow(0 20px 25px rgba(0,0,0,0.5))"/>
+    <!-- Lid separator line -->
+    <path d="M 0 110 L 240 110" stroke="#94a3b8" stroke-width="3"/>
+    <!-- LED indicator -->
+    <circle cx="120" cy="140" r="5" fill="#22c55e"/>
+    <!-- Brand Logo Text -->
+    <text x="120" y="175" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#64748b" text-anchor="middle" letter-spacing="2">BASEUS ENCOK</text>
+  </g>
+  <!-- Earbud Left -->
+  <g transform="translate(110, 180) rotate(-15)">
+    <ellipse cx="40" cy="40" rx="24" ry="20" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <path d="M 40 40 L 40 95" stroke="#f8fafc" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="40" cy="35" r="7" fill="#0284c7" />
+  </g>
+  <!-- Earbud Right -->
+  <g transform="translate(430, 180) rotate(15)">
+    <ellipse cx="40" cy="40" rx="24" ry="20" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <path d="M 40 40 L 40 95" stroke="#f8fafc" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="40" cy="35" r="7" fill="#0284c7" />
+  </g>
+</svg>
