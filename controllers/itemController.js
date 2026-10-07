@@ -1,4 +1,5 @@
 const { Item } = require('../models/Item');
+const { processUploadedMedia } = require('../services/mediaService');
 
 // Daftar Stop Words Bahasa Indonesia & Frasa Umum Kampus
 const STOP_WORDS = new Set([
@@ -153,10 +154,10 @@ exports.createItem = async (req, res) => {
       cleanContact = '628' + cleanContact.slice(1);
     }
 
-    // Ambil path foto lokal jika ada upload
+    // Ambil path / URL foto (Cloudinary / Disk / Base64 fallback)
     let imageUrl = null;
     if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
+      imageUrl = await processUploadedMedia(req.file);
     } else if (req.body.imageUrl) {
       imageUrl = req.body.imageUrl.trim();
     }

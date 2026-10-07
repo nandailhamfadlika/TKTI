@@ -58,27 +58,42 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Database Connection & Server Initialization
+// Database Connection Manager (Cached untuk Vercel Serverless & Localhost)
+let dbPromise = null;
+async function ensureDatabaseConnected() {
+  if (mongoose.connection.readyState === 1) {
+    return;
+  }
+  if (!dbPromise) {
+    dbPromise = mongoose.connect(DATABASE_URL, {
+      serverSelectionTimeoutMS: 4000
+    }).then(async () => {
+      console.log('[Database] Terhubung ke MongoDB secara sukses!');
+      await Item.seedData();
+    }).catch(async (err) => {
+      console.warn('[Database] Peringatan: Tidak dapat terhubung ke MongoDB server:', err.message);
+      console.log('[Database] Beralih otomatis ke In-Memory Data Store.');
+      await Item.seedData();
+    });
+  }
+  return dbPromise;
+}
+
+// Middleware untuk memastikan koneksi DB siap sebelum menangani request API
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    await ensureDatabaseConnected();
+  }
+  next();
+});
+
+// Jalankan standalone listener jika berjalan di lokal (bukan Vercel Serverless)
 async function startServer() {
   console.log('--------------------------------------------------');
   console.log('  CAMPUS LOST & FOUND HUB - LOCAL DEVELOPMENT');
   console.log('--------------------------------------------------');
 
-  try {
-    // Coba hubungkan ke MongoDB dengan timeout singkat agar tidak memblokir local development
-    console.log(`[Database] Mencoba menghubungkan ke MongoDB: ${DATABASE_URL}...`);
-    await mongoose.connect(DATABASE_URL, {
-      serverSelectionTimeoutMS: 2500
-    });
-    console.log('[Database] Terhubung ke MongoDB secara sukses!');
-    await Item.seedData();
-  } catch (err) {
-    console.warn('[Database] Peringatan: Tidak dapat terhubung ke MongoDB server.');
-    console.warn(`[Database] Alasan: ${err.message}`);
-    console.log('[Database] Beralih otomatis ke In-Memory Data Store.');
-    console.log('[Database] Semua fitur sistem (CRUD, Smart Matcher, WhatsApp Claim) tetap berfungsi penuh!');
-    await Item.seedData();
-  }
+  await ensureDatabaseConnected();
 
   app.listen(PORT, () => {
     console.log(`[Server] Aplikasi berjalan aktif di: http://localhost:${PORT}`);
@@ -87,4 +102,8 @@ async function startServer() {
   });
 }
 
-startServer();
+if (!process.env.VERCEL) {
+  startServer();
+}
+
+module.exports = app;

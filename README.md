@@ -140,3 +140,35 @@ Data seed awal telah memuat 8 item kampus realistis dengan pasangan yang saling 
 2. **Kunci Motor Honda Beat Hitam** (Lost, Parkiran Utama) $\leftrightarrow$ **Gantungan Kunci Motor Honda & Boneka Beruang** (Found, Parkiran Utama) $\rightarrow$ *Skor kecocokan tinggi (>80%)*.
 3. **Earphone TWS Baseus Encok WM01 Putih** (Lost, Perpustakaan) $\leftrightarrow$ **TWS Baseus Putih di Meja Belajar** (Found, Perpustakaan) $\rightarrow$ *Skor kecocokan tinggi (>85%)*.
 4. Klik tombol **"Detail & Match"** pada salah satu barang di atas untuk melihat engine bekerja secara interaktif!
+
+---
+
+## ☁️ Panduan Deployment ke Vercel (Lengkap Media & Environment)
+
+### 1. Mengapa Upload Media Awalnya Gagal di Vercel?
+Di platform Vercel Serverless (AWS Lambda):
+- Sistem berkas (*filesystem*) bersifat **Read-Only** (`EROFS: read-only file system`). Server tidak dapat menulis file baru secara permanen ke direktori lokal `public/uploads/`.
+- Setiap request ditangani oleh fungsi serverless yang bersifat *stateless* dan *ephemeral*.
+
+### 2. Solusi Arsitektur yang Diterapkan:
+- **`multer.memoryStorage()`**: File foto diterima langsung di memori (*buffer*), bukan disk fisik.
+- **Dukungan Cloudinary CDN**: Jika kredensial Cloudinary disetel, foto otomatis diunggah ke CDN Cloudinary berkecepatan tinggi.
+- **Auto-Fallback Base64 Data URI (Zero-Config)**: Jika Anda belum mendaftar Cloudinary, sistem otomatis mengubah gambar menjadi Base64 Data URI dan menyimpannya langsung ke database MongoDB. **Upload media langsung berfungsi di Vercel tanpa perlu setup pihak ketiga!**
+- **Berkas `vercel.json`**: Mengonfigurasi Express serverless runtime dan routing otomatis.
+
+### 3. Konfigurasi Environment Variables di Dashboard Vercel
+
+Buka **Vercel Dashboard** $\rightarrow$ Pilih Project Anda $\rightarrow$ Tab **Settings** $\rightarrow$ **Environment Variables**.
+
+Tambahkan variabel berikut:
+
+| Nama Variabel | Contoh Nilai | Keterangan |
+|---|---|---|
+| `DATABASE_URL` | `mongodb+srv://admin:pass@cluster0.abc.mongodb.net/campus_lost_found?retryWrites=true&w=majority` | **Wajib:** Koneksi MongoDB Atlas agar data persisten di cloud |
+| `NODE_ENV` | `production` | Mode produksi |
+| `CLOUDINARY_CLOUD_NAME` | `my-campus-hub` | *(Opsional)* Cloud Name dari Cloudinary |
+| `CLOUDINARY_API_KEY` | `987654321012345` | *(Opsional)* API Key dari Cloudinary |
+| `CLOUDINARY_API_SECRET` | `A_BcDeFgHiJkLmNoPqRsTuVwXyZ` | *(Opsional)* API Secret dari Cloudinary |
+
+Setelah menambahkan Environment Variables, lakukan **Redeploy** di Vercel (*Deployments* $\rightarrow$ klik titik tiga $\rightarrow$ *Redeploy*).
+
